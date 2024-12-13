@@ -1,0 +1,8 @@
+productId,productName,price,stockQuantity,description
+P001,Smartphone,699.99,50,High-quality smartphone with 128GB storage
+P002,Laptop,1299.99,20,Lightweight laptop with 16GB RAM
+X003,Headphones,199.99,100,Noise-cancelling over-ear headphones
+P004,Monitor,299.99,25,27-inch 4K UHD monitor
+Y005,Keyboard,49.99,200,Mechanical keyboard with RGB lighting
+P010,TestProduct,299.99,25,27-inch 4K UHD monitor
+
