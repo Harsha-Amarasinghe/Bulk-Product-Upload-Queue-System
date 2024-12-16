@@ -40,7 +40,9 @@ public class ProductConsumerService {
     }
 
     private void logError(Product product, String errorMessage) {
-        ErrorLog errorLog = new ErrorLog(product.getProductId(), errorMessage, LocalDateTime.now());
+        ErrorLog errorLog = new ErrorLog(product.getProductId(), product.getProductName(),
+                product.getPrice(), product.getDescription(),
+                errorMessage, LocalDateTime.now());
         errorLogRepository.save(errorLog);
     }
 }

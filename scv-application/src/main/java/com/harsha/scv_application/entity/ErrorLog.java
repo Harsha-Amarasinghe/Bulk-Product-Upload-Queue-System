@@ -19,8 +19,20 @@ public class ErrorLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String productId;
+    private String productName;
+    private Double price;
+    private String description;
     private String errorMessage;
     private LocalDateTime dateLogged;
+
+    public ErrorLog(String productId, String productName, Double price, String description, String errorMessage, LocalDateTime dateLogged) {
+        this.productId = productId;
+        this.productName = productName;
+        this.price = price;
+        this.description = description;
+        this.errorMessage = errorMessage;
+        this.dateLogged = dateLogged;
+    }
 
     public ErrorLog(String productId, String errorMessage, LocalDateTime dateLogged) {
         this.productId = productId;

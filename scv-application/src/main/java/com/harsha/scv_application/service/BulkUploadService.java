@@ -21,9 +21,16 @@ public class BulkUploadService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private StatusNotificationService statusNotificationService;
+
     public void processCSV(MultipartFile file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
+            int processedLinesCount=0;
             boolean isFirstLine = true; // Skip header row
             while ((line = reader.readLine()) != null) {
                 if (isFirstLine) {
@@ -34,8 +41,24 @@ public class BulkUploadService {
                 if (product != null) {
                     rabbitTemplate.convertAndSend("productQueue", product);
                 }
+                processedLinesCount++;
+
+                //status notification service - web sockets
+                statusNotificationService.notifyStatus("Processing line: " + line);
             }
+            //email notifications service
+            notificationService.sendEmail(
+                    "harabiz006@gmail.com",
+                    "Upload Completed",
+                    "Your file with " + processedLinesCount + " lines has been successfully processed."
+            );
+
+            //status notification service - web sockets
+            statusNotificationService.notifyStatus("Processing completed successfully");
         } catch (IOException e) {
+            //status notification service - web sockets
+            statusNotificationService.notifyStatus("Processing failed");
+
             throw new RuntimeException("Error reading CSV file", e);
         }
     }
@@ -43,8 +66,14 @@ public class BulkUploadService {
     private Product parseLine(String line) {
         try {
             String[] fields = line.split(",");
+            if (line.trim().isEmpty()) {
+                return null; // Skip empty lines
+            }
             if (fields.length != 5) {
-                throw new IllegalArgumentException("Invalid CSV format");
+                if (fields.length != 5) {
+                    System.err.println("Skipping malformed line: " + line);
+                    return null;
+                }
             }
             return new Product(
                     fields[0],
