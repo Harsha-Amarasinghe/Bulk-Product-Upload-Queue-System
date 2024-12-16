@@ -10,6 +10,9 @@ public class NotificationService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    StatusNotificationService statusNotificationService;
+
     public void sendEmail(String to, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -19,9 +22,11 @@ public class NotificationService {
             message.setText(text);
             mailSender.send(message);
             System.out.println("Email sent successfully!");
+            statusNotificationService.notifyStatus("Email sent successfully!");
         } catch (Exception e) {
             System.err.println("Failed to send email: " + e.getMessage());
             e.printStackTrace();
+            statusNotificationService.notifyStatus("Failed to send email");
         }
     }
 }
